@@ -48,6 +48,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="graphics\lego\EnemigoAnimaciones.scml">
+      <Name>EnemigoAnimaciones</Name>
+      <Importer>SpriterImporter</Importer>
+      <Processor>SpriterProcessor</Processor>
+    </Compile>
     <Compile Include="graphics\models\Example.scml">
       <Name>Example</Name>
       <Importer>SpriterImporter</Importer>

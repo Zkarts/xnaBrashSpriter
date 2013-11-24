@@ -60,8 +60,12 @@ namespace BrashMonkeySpriterGameTest {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            m_character = Content.Load<CharacterModel>(@".\graphics\models\player").CreateAnimator("Player");
-            m_character.ChangeAnimation("idle");
+            m_character = Content.Load<CharacterModel>(@".\graphics\lego\EnemigoAnimaciones").CreateAnimator("Player");
+
+            m_character.ApplyCharMap("Enemigo00");
+
+            m_character.ChangeAnimation("Jumping");
+            
 
             // TODO: use this.Content to load your game content here
         }

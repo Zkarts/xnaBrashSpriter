@@ -50,7 +50,8 @@ namespace BrashMonkeySpriter.Content {
 
             /// ------------------- Entities -------------------------------
             Int32 l_entityCount = p_input.ReadInt32();///Number of Entities
-            for (int l_eIter = 0; l_eIter < l_entityCount; l_eIter++) {
+            for (int l_eIter = 0; l_eIter < l_entityCount; l_eIter++) 
+            {
                 Entity l_entity = new Entity();
 
                 l_entity.Name = p_input.ReadString();///Name
@@ -179,6 +180,9 @@ namespace BrashMonkeySpriter.Content {
                 p_character.Add(l_entity);
             }
 
+
+            p_character.CharacterMaps = p_input.ReadObject< List<CharacterMap> >();
+            
             return p_character;
         }
     }

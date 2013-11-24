@@ -21,6 +21,7 @@ namespace BrashMonkeySpriter {
     public class CharacterModel : List<Entity> {
         public List<Texture2D> Textures { get; internal protected set; }
         public List<List<Rectangle>> Rectangles { get; internal protected set; }
+        public List<CharacterMap> CharacterMaps { get; internal protected set; }
 
         public CharacterModel()
             : base() {
@@ -115,6 +116,30 @@ namespace BrashMonkeySpriter {
             set { m_scale = value; }
         }
 
+        protected string CurrentCharacterMapName
+        {
+            get;
+            set;
+        }
+
+        protected CharacterMap CurrentCharacterMap
+        {
+            get;
+            set;
+        }
+
+
+        protected List<CharacterMap> CharacterMapList
+        {
+            get;
+            set;
+
+        }
+
+
+
+
+
         protected Entity m_entity = null;
         protected Animation m_current;
         protected int m_elapsedTime = 0;
@@ -132,7 +157,7 @@ namespace BrashMonkeySpriter {
             m_entity = p_model[p_entity];
             m_tx = p_model.Textures;
             m_rect = p_model.Rectangles;
-
+            CharacterMapList = p_model.CharacterMaps;
             ChangeAnimation(0);
         }
 
@@ -141,6 +166,24 @@ namespace BrashMonkeySpriter {
             m_renderList = new List<RenderMatrix>(m_current.MainLine[0].Body.Count);
             m_boneTransforms = new Dictionary<int, AnimationTransform>(m_current.MainLine[0].Body.Count);
         }
+
+
+        public void ApplyCharMap(string mapName)
+        {
+           
+            var empnamesEnum = from emp in  CharacterMapList
+                   where emp.Name == mapName select emp;
+            
+            CurrentCharacterMap = empnamesEnum.FirstOrDefault();
+            if ( CurrentCharacterMap != null )
+                CurrentCharacterMapName = CurrentCharacterMap.Name;
+        }
+
+        public void RemoveCharacterMap()
+        {
+            CurrentCharacterMapName = null;
+        }
+
 
         public void ChangeAnimation(int p_index) {
             m_current = m_entity[p_index];
@@ -249,6 +292,32 @@ namespace BrashMonkeySpriter {
             return l_transform;
         }
 
+
+
+        private void FindMapChar(int folder, int file, out int targetForder, out int targetFile)
+        {
+            targetForder = folder;
+            targetFile = file;
+
+            
+
+
+            var t = CurrentCharacterMap.Maps.Where(p => p.Folder == folder && p.File == file);
+
+            if (t.Count() > 0)
+            {
+                var element = t.First();
+                targetForder = element.TargetFolder;
+                targetFile = element.TargetFile;
+            }
+
+        }
+
+
+
+
+
+
         public void Update(GameTime p_gameTime) {
             m_renderList.Clear();
             m_boneTransforms.Clear();
@@ -283,9 +352,18 @@ namespace BrashMonkeySpriter {
 
                 RenderMatrix l_render = new RenderMatrix(ApplyBoneTransforms(l_mainline, l_mainline.Body[l_i]));
 
+
+
                 l_render.File = l_key.File;
                 l_render.Folder = l_key.Folder;
 
+                if (CurrentCharacterMapName != null)
+                {
+                    FindMapChar(l_key.Folder, l_key.File, out l_render.Folder, out l_render.File);
+                }
+
+                
+                
                 l_render.Location = Location + Vector2.Multiply(l_render.Location, l_flip);
                     
                 if (m_flipX) {
