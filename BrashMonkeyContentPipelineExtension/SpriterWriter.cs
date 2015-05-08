@@ -21,7 +21,7 @@ using System.Globalization;
 namespace BrashMonkeyContentPipelineExtension {
     [ContentTypeWriter]
     public class SpriterWriter : ContentTypeWriter<SpriterShadowData> {
-        private bool GetAttributeInt32(XElement p_element, String p_name, out Int32 p_out, Int32 p_default = 0) {
+        private bool GetAttributeInt32(XElement p_element, String p_name, out Int32 p_out, Int32 p_default = -1) {
             if (p_element.Attribute(p_name) != null) {
                 return Int32.TryParse(p_element.Attribute(p_name).Value, out p_out);
             }

@@ -28,18 +28,19 @@ namespace BrashMonkeySpriter {
 
             Textures = new List<Texture2D>();
             Rectangles = new List<List<Rectangle>>();
+            CharacterMaps = new List<CharacterMap>();
         }
 
         public Entity this[string p_name] {
             get { return this.FirstOrDefault(x => x.Name == p_name); }
         }
 
-        public CharaterAnimator CreateAnimator(String p_entity) {
-            return new CharaterAnimator(this, p_entity);
+        public CharacterAnimator CreateAnimator(String p_entity) {
+            return new CharacterAnimator(this, p_entity);
         }
     }
 
-    public class CharaterAnimator {
+    public class CharacterAnimator {
         protected struct RenderMatrix {
             public float Alpha;
             public SpriteEffects Effects;
@@ -116,18 +117,11 @@ namespace BrashMonkeySpriter {
             set { m_scale = value; }
         }
 
-        protected string CurrentCharacterMapName
+        protected List<CharacterMap> CurrentCharacterMaps
         {
             get;
             set;
         }
-
-        protected CharacterMap CurrentCharacterMap
-        {
-            get;
-            set;
-        }
-
 
         protected List<CharacterMap> CharacterMapList
         {
@@ -135,10 +129,6 @@ namespace BrashMonkeySpriter {
             set;
 
         }
-
-
-
-
 
         protected Entity m_entity = null;
         protected Animation m_current;
@@ -153,7 +143,8 @@ namespace BrashMonkeySpriter {
         public delegate void AnimationEndedHandler();
         public event AnimationEndedHandler AnimationEnded;
 
-        public CharaterAnimator(CharacterModel p_model, String p_entity) {
+        public CharacterAnimator(CharacterModel p_model, String p_entity) {
+            CurrentCharacterMaps = new List<CharacterMap>();
             m_entity = p_model[p_entity];
             m_tx = p_model.Textures;
             m_rect = p_model.Rectangles;
@@ -168,20 +159,17 @@ namespace BrashMonkeySpriter {
         }
 
 
-        public void ApplyCharMap(string mapName)
+        public void ApplyCharacterMap(string mapName)
         {
-           
-            var empnamesEnum = from emp in  CharacterMapList
-                   where emp.Name == mapName select emp;
+            var empnamesEnum = from emp in CharacterMapList
+                               where emp.Name == mapName select emp;
             
-            CurrentCharacterMap = empnamesEnum.FirstOrDefault();
-            if ( CurrentCharacterMap != null )
-                CurrentCharacterMapName = CurrentCharacterMap.Name;
+            CurrentCharacterMaps.Add(empnamesEnum.FirstOrDefault());
         }
 
-        public void RemoveCharacterMap()
+        public void RemoveCharacterMap(string mapName)
         {
-            CurrentCharacterMapName = null;
+            CurrentCharacterMaps.Remove(CurrentCharacterMaps.First(cm => cm.Name == mapName));
         }
 
 
@@ -292,31 +280,28 @@ namespace BrashMonkeySpriter {
             return l_transform;
         }
 
-
-
-        private void FindMapChar(int folder, int file, out int targetForder, out int targetFile)
+        private void FindMapChar(int folder, int file, out int targetFolder, out int targetFile)
         {
-            targetForder = folder;
+            targetFolder = folder;
             targetFile = file;
 
-            
-
-
-            var t = CurrentCharacterMap.Maps.Where(p => p.Folder == folder && p.File == file);
-
-            if (t.Count() > 0)
+            if (!CurrentCharacterMaps.Any())
             {
-                var element = t.First();
-                targetForder = element.TargetFolder;
-                targetFile = element.TargetFile;
+                return;
             }
 
+            //Search for the element starting from the last character map
+            for (int i = CurrentCharacterMaps.Count - 1; i >= 0; i--)
+            {
+                var map = CurrentCharacterMaps[i].Maps.FirstOrDefault(cm => cm.Folder == folder && cm.File == file);
+                if (map != null)
+                {
+                    targetFolder = map.TargetFolder;
+                    targetFile = map.TargetFile;
+                    break;
+                }
+            }
         }
-
-
-
-
-
 
         public void Update(GameTime p_gameTime) {
             m_renderList.Clear();
@@ -352,17 +337,11 @@ namespace BrashMonkeySpriter {
 
                 RenderMatrix l_render = new RenderMatrix(ApplyBoneTransforms(l_mainline, l_mainline.Body[l_i]));
 
-
-
-                l_render.File = l_key.File;
-                l_render.Folder = l_key.Folder;
-
-                if (CurrentCharacterMapName != null)
+                FindMapChar(l_key.Folder, l_key.File, out l_render.Folder, out l_render.File);
+                if (l_render.Folder == -1 || l_render.File == -1)
                 {
-                    FindMapChar(l_key.Folder, l_key.File, out l_render.Folder, out l_render.File);
+                    continue;
                 }
-
-                
                 
                 l_render.Location = Location + Vector2.Multiply(l_render.Location, l_flip);
                     

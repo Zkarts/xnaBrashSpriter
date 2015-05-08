@@ -12,17 +12,12 @@ namespace BrashMonkeySpriter.Spriter
         public MapInstruction[] Maps { get; set; }
     }
 
-
-    public struct MapInstruction
+    public class MapInstruction
     {
-        public int Folder { get; set; }
-        public int File { get; set; }
+        public int Folder;
+        public int File;
 
-        public int TargetFolder { get; set; }
-        public int TargetFile { get; set; }
-
+        public int TargetFolder;
+        public int TargetFile;
     }
-
-
-
 }

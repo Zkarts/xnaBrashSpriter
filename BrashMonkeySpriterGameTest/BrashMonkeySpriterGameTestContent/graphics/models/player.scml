@@ -113,6 +113,9 @@
         <character_map id="1" name="abap">
             <map folder="2" file="0" target_folder="6" target_file="3"/>
         </character_map>
+        <character_map id="2" name="hidden">
+            <map folder="2" file="0"/>
+        </character_map>
         <animation id="0" name="idle" length="4000">
             <mainline>
                 <key id="0">

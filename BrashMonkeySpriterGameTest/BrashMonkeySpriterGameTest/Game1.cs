@@ -27,7 +27,7 @@ namespace BrashMonkeySpriterGameTest {
     public class Game1 : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        CharaterAnimator m_character;
+        CharacterAnimator m_character;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -60,11 +60,14 @@ namespace BrashMonkeySpriterGameTest {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            m_character = Content.Load<CharacterModel>(@".\graphics\lego\EnemigoAnimaciones").CreateAnimator("Player");
+            m_character = Content.Load<CharacterModel>(@".\graphics\models\player").CreateAnimator("Player");
 
-            m_character.ApplyCharMap("Enemigo00");
+            m_character.ApplyCharacterMap("abap");
+            m_character.ApplyCharacterMap("orm");
+            m_character.ApplyCharacterMap("hidden");
+            m_character.RemoveCharacterMap("hidden");
 
-            m_character.ChangeAnimation("Jumping");
+            m_character.ChangeAnimation("idle");
             
 
             // TODO: use this.Content to load your game content here

@@ -52,6 +52,7 @@
       <Name>EnemigoAnimaciones</Name>
       <Importer>SpriterImporter</Importer>
       <Processor>SpriterProcessor</Processor>
+      <SubType>Designer</SubType>
     </Compile>
     <Compile Include="graphics\models\Example.scml">
       <Name>Example</Name>

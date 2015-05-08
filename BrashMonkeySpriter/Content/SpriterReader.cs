@@ -180,8 +180,7 @@ namespace BrashMonkeySpriter.Content {
                 p_character.Add(l_entity);
             }
 
-
-            p_character.CharacterMaps = p_input.ReadObject< List<CharacterMap> >();
+            p_character.CharacterMaps = p_input.ReadObject<List<CharacterMap>>();
             
             return p_character;
         }
